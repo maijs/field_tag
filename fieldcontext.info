@@ -1,0 +1,4 @@
+name = Field context
+description = Allows users to assign contexts to field instances.
+core = 7.x
+files[] = fieldcontext.test
