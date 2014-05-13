@@ -46,7 +46,7 @@ function fieldcontext_options() {
     uasort($option_info, 'drupal_sort_weight');
     
     // Loop through all context option groups
-    foreach ($option_group_info AS $group_key => $group) {
+    foreach ($option_group_info AS $group) {
       // Check if group title is set
       if (isset($group['title'])) {
         $result[$group['title']] = array();
@@ -136,14 +136,20 @@ function fieldcontext_compare_context_strings($context, $other_context, $preg_ma
 /**
  * Return field names that correspond to given context in a entity type bundle.
  *
- * @param $context
+ * @param string $context
  *   The context that is attached to the field (regular string or a valid pattern for preg_match()).
- * @param $entity_type
+ * @param string $entity_type
  *   The type of $entity; e.g., 'node' or 'user'.
- * @param $bundle
+ * @param string $bundle
  *   The entity bundle which contains the field to which the context is attached.
- * @return
- *   The array (keyed by entity type and bundle) containing field names that have given context if entity_type or bundle is not specified.
+ * @param boolean $preg_match
+ *   A bool whether $context variable contains a pattern for preg_match() in which case preg_match() 
+ *   is used for context comparison.
+ * @return array
+ *   An array containing field names that have given context.
+ *
+ *   Note: If $entity_type or $bundle is not specified, the array is keyed by entity type, bundle and field name.
+ *         If $entity_type and $bundle is specified, the array is keyed by field name.
  */
 function fieldcontext_get_field_name_multiple($context, $entity_type = NULL, $bundle = NULL, $preg_match = FALSE) {
   // Statically store results for all entity types and bundles
@@ -280,7 +286,7 @@ function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) 
       '#type' => 'select',
       '#title' => t('Context'),
       '#default_value' => $context_options_value,
-      '#description' => t('Select the predefined context of this field instance.'),
+      '#description' => t('Select the context of this field instance.'),
       '#options' => $context_options_list,
     );
     

@@ -60,7 +60,7 @@ class FieldcontextTestCase extends DrupalWebTestCase {
     );
     
     // Create test node content types
-    foreach ($content_types AS $content_type_name => $content_type) {
+    foreach ($content_types AS $content_type) {
       // Set defaults
       $content_type_defaults = node_type_set_defaults($content_type);
       // Add body field
@@ -94,7 +94,7 @@ class FieldcontextTestCase extends DrupalWebTestCase {
     );
     
     // Create fields
-    foreach ($fields AS $field_name => $field) {
+    foreach ($fields AS $field) {
       field_create_field($field);
     }
     
