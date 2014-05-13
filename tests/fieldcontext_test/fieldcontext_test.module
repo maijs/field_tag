@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * Implements hook_fieldcontext_option_info().
+ */
+function fieldcontext_test_fieldcontext_option_info() {
+  return array(
+    'nove mber %' => array(
+      'title' => t('November'),
+    ),
+    'december' => array(
+      'title' => t('December'),
+      'group' => 'winter',
+      'weight' => 0,
+    ),
+    'january' => array(
+      'title' => t('January'),
+      'group' => 'winter',
+      'weight' => 1,
+    ),
+    'february' => array(
+      'title' => t('February'),
+      'group' => 'winter',
+      'weight' => 2,
+    ),
+    'march' => array(
+      'title' => t('March'),
+      'group' => 'spring',
+      'weight' => 0,
+    ),
+    'april' => array(
+      'title' => t('April'),
+      'weight' => 0,
+    ),
+    'may' => array(
+      'title' => t('May'),
+      'weight' => 1,
+    ),
+  );
+}
+
+/**
+ * Implements hook_fieldcontext_option_group_info().
+ */
+function fieldcontext_test_fieldcontext_option_group_info() {
+  return array(
+    'winter' => array(
+      'title' => t('Winter'),
+      'weight' => 0,
+    ),
+    'spring' => array(
+      'title' => t('Spring'),
+      'weight' => 1,
+    ),
+  );
+}
+
+/**
+ * Alter predefined field context options
+ */
+function fieldcontext_test_fieldcontext_options_alter(&$options) {
+  $options['june'] = t('June');
+}
+
+/**
+ * Alters allowed field context value pattern.
+ */
+function fieldcontext_test_fieldcontext_value_pattern_alter(&$pattern) {
+  $pattern = '/^[A-Za-z0-9\-_$.]+$/';
+}
+
+/**
+ * Alter allowed field context value pattern description that is displayed to the user.
+ */
+function fieldcontext_test_fieldcontext_value_pattern_description_text_alter(&$text) {
+  $text = t('alphanumeric values, underscores, dashes or dollar sign');
+}
