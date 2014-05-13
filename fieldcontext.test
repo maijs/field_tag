@@ -1,23 +1,11 @@
 <?php
+
 /**
- * Tests the functionality of the Field Context module
+ * Common parent class containing common helpers.
  */
-class FieldcontextTestCase extends DrupalWebTestCase {
-  protected $profile = 'testing';
-  
+class FieldContextWebTestCase extends DrupalWebTestCase {
   /**
-   * General info of the test case
-   */
-  public static function getInfo() {
-    return array(
-      'name' => 'Field Context Test',
-      'description' => 'Ensure that the fieldcontext module returns accurate data.',
-      'group' => 'Field context',
-    );
-  }
-  
-  /**
-   * Create global field name => context map for each node content type
+   * Returns global field name => context map for each node content type
    */
   public function getContextMap() {
     return array(
@@ -36,161 +24,16 @@ class FieldcontextTestCase extends DrupalWebTestCase {
   }
   
   /**
-   * Creates node content types for testing
+   * Get assertion message arguments
    */
-  public function createTestNodeContentTypes() {
-    $t = get_t();
+  public function getAssertionMessageArgs($args) {
+    $result = array();
 
-    // Define the node type.
-    $content_types = array(
-      'wine_context' => array(
-        'type' => 'wine_context',
-        'name' => $t('Wine (Context)'),
-        'base' => 'node_content',
-        'description' => $t('This is an example wine node content type.'),
-        'body_label' => $t('Body'),
-      ),
-      'beer_context' => array(
-        'type' => 'beer_context',
-        'name' => $t('Beer (Context)'),
-        'base' => 'node_content',
-        'description' => $t('This is an example beer node content type.'),
-        'body_label' => $t('Body'),
-      ),
-    );
-    
-    // Create test node content types
-    foreach ($content_types AS $content_type) {
-      // Set defaults
-      $content_type_defaults = node_type_set_defaults($content_type);
-      // Add body field
-      node_add_body_field($content_type_defaults);
-      // Save the content type
-      node_type_save($content_type_defaults);
-    }
-  }
-  
-  /**
-   * Creates new fields for testing
-   */
-  public function createTestFields() {
-    // Get field name => context map
-    $context_map = $this->getContextMap();
-    
-    // Define context => field
-    $fields = array(
-      'brand' => array(
-        'field_name' => 'field_brand',
-        'type' => 'text',
-      ),
-      'year' => array(
-        'field_name' => 'field_year',
-        'type' => 'number_integer',
-      ),
-      'purchase_year' => array(
-        'field_name' => 'field_purchase_year',
-        'type' => 'number_integer',
-      ),
-    );
-    
-    // Create fields
-    foreach ($fields AS $field) {
-      field_create_field($field);
+    foreach ($args AS $key => $value) {
+      $result['%' . $key] = (string)$value;
     }
     
-    // Define instances
-    $instances = array(
-      'node_wine_context_field_brand' => array(
-        'field_name' => 'field_brand',
-        'entity_type' => 'node',
-        'bundle' => 'wine_context', 
-        'label' => 'Brand',
-        'settings' => array(
-          'user_register_form' => 1,
-          // Define field context for this instance
-          'fieldcontext' => $context_map['node']['wine_context']['field_brand'],
-        ),
-        'widget' => array(
-          'type' => 'textfield',
-        ), 
-      ),
-      'node_beer_context_field_brand' => array(
-        'field_name' => 'field_brand',
-        'entity_type' => 'node',
-        'bundle' => 'beer_context', 
-        'label' => 'Brand',
-        'settings' => array(
-          'user_register_form' => 1,
-          // Define field context for this instance
-          'fieldcontext' => $context_map['node']['beer_context']['field_brand'],
-        ),
-        'widget' => array(
-          'type' => 'textfield',
-        ), 
-      ),
-      'node_wine_context_field_year' => array(
-        'field_name' => 'field_year',
-        'entity_type' => 'node',
-        'bundle' => 'wine_context', 
-        'label' => 'Production year',
-        'settings' => array(
-          'user_register_form' => 1,
-          // Define field context for this instance
-          'fieldcontext' => $context_map['node']['wine_context']['field_year'],
-        ),
-        'widget' => array(
-          'type' => 'number',
-        ), 
-      ),
-      'node_beer_context_field_year' => array(
-        'field_name' => 'field_year',
-        'entity_type' => 'node',
-        'bundle' => 'beer_context', 
-        'label' => 'Production year',
-        'settings' => array(
-          'user_register_form' => 1,
-          // Define field context for this instance
-          'fieldcontext' => $context_map['node']['beer_context']['field_year'],
-        ),
-        'widget' => array(
-          'type' => 'number',
-        ), 
-      ),
-      'node_beer_context_field_purchase_year' => array(
-        'field_name' => 'field_purchase_year',
-        'entity_type' => 'node',
-        'bundle' => 'beer_context', 
-        'label' => 'Purchase year',
-        'settings' => array(
-          'user_register_form' => 1,
-          // Define field context for this instance
-          'fieldcontext' => $context_map['node']['beer_context']['field_purchase_year'],
-        ),
-        'widget' => array(
-          'type' => 'number',
-        ), 
-      ), 
-    );
-    
-    // Create instances
-    foreach ($instances AS $instance) {
-      // Create an instance
-      field_create_instance($instance);
-    }
-  }
-  
-  /**
-   * Set up a testing environment
-   */
-  public function setUp() {
-    // Enable modules
-    parent::setUp(array('node', 'field', 'text', 'number'));
-    
-    // Create node content type for testing
-    $this->createTestNodeContentTypes();
-    
-    // Create fields for newly created node types
-    $this->createTestFields();
+    return $result;
   }
   
   /**
@@ -206,95 +49,80 @@ class FieldcontextTestCase extends DrupalWebTestCase {
   public function retrieveMultipleFieldNames($context, $entity_type = NULL, $bundle = NULL, $preg_match = FALSE) {
     return fieldcontext_get_field_name_multiple($context, $entity_type, $bundle, $preg_match);
   }
+}
+
+/**
+ * Tests the functionality of the Field context module
+ */
+class FieldContextTestCase extends FieldContextWebTestCase {
+  protected $profile = 'testing';
   
   /**
-   * Get assertion message arguments
+   * General info of the test case
    */
-  public function getAssertionMessageArgs($args) {
-    // Make sure keys exist
-    $args += array(
-      'context' => NULL,
-      'entity_type' => NULL,
-      'bundle' => NULL,
-      'field_name' => NULL, 
-    );
-    
+  public static function getInfo() {
     return array(
-      '%context' => $args['context'],
-      '@entity_type' => $args['entity_type'],
-      '@entity_type_bundle' => $args['entity_type'] . (!empty($args['entity_type']) && !empty($args['bundle']) ? ':' : '') . $args['bundle'],
-      '%field_name' => (is_array($args['field_name']) ? 'multiple fields' : $args['field_name']),
+      'name' => 'Field Context Test',
+      'description' => 'Ensure that the fieldcontext module returns accurate data.',
+      'group' => 'Field context',
     );
   }
-  
+
   /**
-   * Test case for field name retrieval by context for specific entity type and bundle
+   * Test for field context with entity type and bundle
    */
-  public function testFieldContext() {
+  public function testFieldContextWithEntityTypeAndBundle() {
+    module_enable(array('fieldcontext_test'));
+    
     // Get field name => context map
     $context_map = $this->getContextMap();
+    // Assert message
+    $assert_message = 'Using context %context, entity type %entity_type and bundle %bundle to retrieve field name. Result is correct.';
+    
+    // Check field name "field_brand" in "wine_context" bundle of "node" entity type
+    
+    // Set arguments
+    $args['entity_type'] = 'node';
+    $args['bundle'] = 'wine_context';
+    $args['field_name'] = 'field_brand';
+    $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
 
-    // Define assertion message
-    $assert_message = 'Context for %field_name in @entity_type_bundle is %context.';
-    
-    /* */
-    /* Test context for single "field_brand" field in "wine_context" node content type */
-    /* */
-    $args['entity_type'] = 'node';
-    $args['bundle'] = 'wine_context';
-    $args['field_name'] = 'field_brand';
-    $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
-    
-    // Set context, entity type and bundle
+    // Get result
     $result = $this->retrieveSingleFieldName($args['context'], $args['entity_type'], $args['bundle']);
     // Assert identicality
     $this->assertIdentical($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
     
-    /* */
-    /* Test context for single "field_year" field in "wine_context" node content type */
-    /* */
-    $args['entity_type'] = 'node';
-    $args['bundle'] = 'wine_context';
-    $args['field_name'] = 'field_year';
-    $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
+    // Check field name "field_year" in "beer_context" bundle
     
-    // Set context, entity type and bundle
-    $result = $this->retrieveSingleFieldName($args['context'], $args['entity_type'], $args['bundle']);
-    // Assert identicality
-    $this->assertIdentical($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
-    
-    /* */
-    /* Test context for single "field_brand" field in "beer_context" node content type */
-    /* */
-    $args['entity_type'] = 'node';
-    $args['bundle'] = 'beer_context';
-    $args['field_name'] = 'field_brand';
-    $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
-    
-    // Set context, entity type and bundle
-    $result = $this->retrieveSingleFieldName($args['context'], $args['entity_type'], $args['bundle']);
-    // Assert identicality
-    $this->assertIdentical($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
-    
-    /* */
-    /* Test context for single "field_year" field in "beer_context" node content type */
-    /* */
+    // Set arguments
     $args['entity_type'] = 'node';
     $args['bundle'] = 'beer_context';
     $args['field_name'] = 'field_year';
     $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
 
-    // Set context, entity type and bundle
+    // Get result
     $result = $this->retrieveSingleFieldName($args['context'], $args['entity_type'], $args['bundle']);
     // Assert identicality
     $this->assertIdentical($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+  }
+
+  /**
+   * Test for field context with entity type
+   */
+  public function testFieldContextWithEntityType() {
+    module_enable(array('fieldcontext_test'));
     
-    /* */
-    /* Test for "year" context in multiple fields in all node bundles */
-    /* */
+    // Get field name => context map
+    $context_map = $this->getContextMap();
+    // Assert message
+    $assert_message = 'Using context %context and entity type %entity_type to retrieve field names. Result is correct.';
+    
+    // Check field names with "year" context in "node" entity type
+    
+    // Set arguments
     $args['entity_type'] = 'node';
-    unset($args['bundle']);
-    $args['field_name'] = array(
+    $args['context'] = 'year';
+    $args['result'] = array(
       'node' => array(
         'wine_context' => array(
           'field_year' => 'field_year',
@@ -304,37 +132,106 @@ class FieldcontextTestCase extends DrupalWebTestCase {
         ),
       ),
     );
-    $args['context'] = 'year';
 
-    // Set context, entity type and bundle
+    // Get result
     $result = $this->retrieveMultipleFieldNames($args['context'], $args['entity_type']);
     // Assert equality
-    $this->assertEqual($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+    $this->assertEqual($result, $args['result'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
     
-    /* */
-    /* Test for "year" context in multiple fields in all "wine_context" bundles */
-    /* */
-    unset($args['entity_type']);
+    // Check field names with "brand" context in "node" entity type
+    
+    // Set arguments
+    $args['entity_type'] = 'node';
+    $args['context'] = 'brand';
+    $args['result'] = array(
+      'node' => array(
+        'wine_context' => array(
+          'field_brand' => 'field_brand',
+        ),
+        'beer_context' => array(
+          'field_brand' => 'field_brand',
+        ),
+      ),
+    );
+
+    // Get result
+    $result = $this->retrieveMultipleFieldNames($args['context'], $args['entity_type']);
+    // Assert equality
+    $this->assertEqual($result, $args['result'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+  }
+
+  /**
+   * Test for field context with bundle
+   */
+  public function testFieldContextWithBundle() {
+    module_enable(array('fieldcontext_test'));
+    
+    // Get field name => context map
+    $context_map = $this->getContextMap();
+    // Assert message
+    $assert_message = 'Using context %context and bundle %bundle to retrieve field names. Result is correct.';
+    
+    // Set arguments
     $args['bundle'] = 'wine_context';
-    $args['field_name'] = array(
+    $args['context'] = 'year';
+    $args['result'] = array(
       'node' => array(
         'wine_context' => array(
           'field_year' => 'field_year',
         ),
       ),
     );
-    $args['context'] = 'year';
-
-    // Set context, entity type and bundle
+    
+    // Get result
     $result = $this->retrieveMultipleFieldNames($args['context'], NULL, $args['bundle']);
     // Assert equality
-    $this->assertEqual($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+    $this->assertEqual($result, $args['result'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+  }
+
+  /**
+   * Test for field using only context 
+   */
+  public function testFieldContextOnly() {
+    module_enable(array('fieldcontext_test'));
     
-    /* */
-    /* Test for multiple contexts ("year*") in multiple fields in all entity types and bundles */
-    /* */
-    unset($args['entity_type'], $args['bundle']);
-    $args['field_name'] = array(
+    // Get field name => context map
+    $context_map = $this->getContextMap();
+    // Assert message
+    $assert_message = 'Using only context %context to retrieve field names. Result is correct.';
+    
+    // Set arguments
+    $args['context'] = 'year';
+    $args['result'] = array(
+      'node' => array(
+        'wine_context' => array(
+          'field_year' => 'field_year',
+        ),
+        'beer_context' => array(
+          'field_year' => 'field_year',
+        ),
+      ),
+    );
+    
+    // Get result
+    $result = $this->retrieveMultipleFieldNames($args['context']);
+    // Assert equality
+    $this->assertEqual($result, $args['result'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+  }
+  
+  /**
+   * Test for field using only context (with "preg_match" flag)
+   */
+  public function testFieldContextOnlyWithPregMatch() {
+    module_enable(array('fieldcontext_test'));
+    
+    // Get field name => context map
+    $context_map = $this->getContextMap();
+    // Assert message
+    $assert_message = 'Using context %context with preg_match flag to retrieve field names. Result is correct.';
+    
+    // Set arguments
+    $args['context'] = '/year[\d]?/i';
+    $args['result'] = array(
       'node' => array(
         'wine_context' => array(
           'field_year' => 'field_year',
@@ -345,11 +242,132 @@ class FieldcontextTestCase extends DrupalWebTestCase {
         ),
       ),
     );
-    $args['context'] = '/year[\d]?/i';
 
-    // Set context, entity type and bundle
+    // Get result
     $result = $this->retrieveMultipleFieldNames($args['context'], NULL, NULL, TRUE);
     // Assert equality
-    $this->assertEqual($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+    $this->assertEqual($result, $args['result'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+  }
+
+  /**
+   * Test for presence of predefined context options in field instance edit form
+   */
+  public function testPredefinedOptionsInFieldInstanceForm() {
+    module_enable(array('fieldcontext_test'));
+
+    // Create user and login
+    $user = $this->drupalCreateUser(array('administer content types'));
+    $this->drupalLogin($user);
+    
+    // Set arguments
+    $args['bundle'] = 'wine_context';
+    $args['field_name'] = 'field_brand';
+    $args['result'] = array(
+      0 => '- None -',
+      1 => 'December',
+      2 => 'January',
+      3 => 'February',
+      4 => 'March',
+      5 => 'April',
+      6 => 'May',
+      7 => 'June',
+      8 => '- Custom -',
+    );
+    
+    // Get field instance edit form
+    $this->drupalGet(sprintf('admin/structure/types/manage/%s/fields/%s', $args['bundle'], $args['field_name']));
+
+    // Set xpath for predefined options
+    $xpath = "//select[@id='edit-instance-settings-fieldcontext-context']";
+    
+    // Get all predefined field context options (even those in groups)
+    $result = array();
+    
+    foreach ($this->xpath("{$xpath}/option | {$xpath}/optgroup/option") AS $key => $element) {
+      $result[] = (string)$element;
+    }
+    
+    // Assert message
+    $assert_message = 'Predefined options are corrext.';
+    
+    // Assert equality
+    $this->assertEqual($result, $args['result'], $assert_message);
+  }
+
+  /**
+   * Test for presence of predefined context options in field instance edit form
+   */
+  public function testPatternDescriptionInFieldInstanceForm() {
+    module_enable(array('fieldcontext_test'));
+
+    // Create user and login
+    $user = $this->drupalCreateUser(array('administer content types'));
+    $this->drupalLogin($user);
+    
+    // Set arguments
+    $args['bundle'] = 'wine_context';
+    $args['field_name'] = 'field_brand';
+    $args['result'] = sprintf('Specify custom context of this field instance (%s).', 'alphanumeric values, underscores, dashes or dollar sign');
+    
+    // Get field instance edit form
+    $this->drupalGet(sprintf('admin/structure/types/manage/%s/fields/%s', $args['bundle'], $args['field_name']));
+    
+    // Assert context pattern validation description
+    $result = $this->xpath("//div[contains(@class, 'form-item-instance-settings-fieldcontext-context-custom')]/div[@class='description']");
+    $result = isset($result[0]) ? (string)$result[0] : '';
+
+    // Assert message
+    $assert_message = 'Context valid pattern description (%result) is correct.';
+    
+    // Assert equality
+    $this->assertEqual($result, $args['result'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+  }
+
+  /**
+   * Test for presence of predefined context options in field instance edit form
+   */
+  public function testFieldInstanceFormSubmit() {
+    module_enable(array('fieldcontext_test'));
+
+    // Create user and login
+    $user = $this->drupalCreateUser(array('administer content types'));
+    $this->drupalLogin($user);
+    
+    // Set arguments
+    $args['entity_type'] = 'node';
+    $args['bundle'] = 'wine_context';
+    $args['field_name'] = 'field_brand';
+
+    // Set invalid context and assert message
+    $args['context'] = 'N*t v@l1d';
+    $assert_message = 'Field instance form validation passed with context %context.';
+
+    // Specify custom context and post a form
+    $edit = array(
+      'instance[settings][fieldcontext][context]' => '_custom',
+      'instance[settings][fieldcontext][context_custom]' => $args['context'],
+    );
+      
+    // Set field instance edit form path
+    $form_path = sprintf('admin/structure/types/manage/%s/fields/%s', $args['bundle'], $args['field_name']);
+
+    // Post the form
+    $this->drupalPost($form_path, $edit, t('Save settings'));
+    
+    // Assert that submitted custom context is not valid
+    $this->assertText('Allowed field context values:', call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
+    
+    // Set valid context ($ is permitted by fieldcontext_test_fieldcontext_value_pattern_alter()) and assert message
+    $assert_message = 'Field instance form successfully saved with context %context.';
+    $edit['instance[settings][fieldcontext][context_custom]'] = $args['context'] = 'V$lid_context.1';
+
+    // Post the form
+    $this->drupalPost($form_path, $edit, t('Save settings'));
+    
+    // Get field instance info in order to have field instance label
+    $field_instance_info = field_info_instance($args['entity_type'], $args['field_name'], $args['bundle']) + array('label' => NULL);
+    
+    // Assert that submitted custom context is not valid
+    $this->assertText(sprintf('Saved %s configuration.', $field_instance_info['label']), call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
   }
 }
