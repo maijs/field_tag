@@ -46,15 +46,17 @@ If you wish to add field contexts for user fields:
 Predefined contexts
 -------------------
 
-For user convenience developers can predefine contexts using hooks to avoid 
-manual field context input from the user. See fieldcontext.api.php file for 
-examples and documentation.
+For user convenience developers can predefine contexts using hooks so that
+users can select field contexts using drop-down list with predefined context
+options.
+
+See fieldcontext.api.php file for examples and documentation.
 
 Integration with Features
 -------------------------
 
-All defined field contexts are automatically exported when field instances
-are being exported via Features.
+All field contexts associated with field instances are automatically included
+in field instance settings when they are exported via Features.
 
 Use case
 --------
