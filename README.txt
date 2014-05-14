@@ -32,8 +32,8 @@ If you wish to add field contexts for node fields:
 3. If you do not have defined fields, add a field and select a field context
 in the "Field context" section of the field edit form.
 4. If you want to add a field context for existing field, click on "edit" link
-for selected field and select a field context in the "Field context" section of the
-field edit form.
+for selected field and select a field context in the "Field context" section of
+the field edit form.
 
 ### Users
 

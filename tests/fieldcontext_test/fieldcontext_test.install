@@ -2,12 +2,16 @@
 
 /**
  * @file
- *   Provides installation hooks for "fieldcontext_test" module.
+ * Installation routines for Field context Test module.
+ */
+
+/**
+ * Implements hook_install().
  */
 function fieldcontext_test_install() {
-  // Install test content types
+  // Install test content types.
   fieldcontext_test_install_content_types();
-  // Install test fields
+  // Install test fields.
   fieldcontext_test_install_fields();
 }
 
@@ -34,14 +38,14 @@ function fieldcontext_test_install_content_types() {
       'body_label' => $t('Body'),
     ),
   );
-  
-  // Create test node content types
-  foreach ($content_types AS $content_type) {
-    // Set defaults
+
+  // Create test node content types.
+  foreach ($content_types as $content_type) {
+    // Set defaults.
     $content_type_defaults = node_type_set_defaults($content_type);
-    // Add body field
+    // Add body field.
     node_add_body_field($content_type_defaults);
-    // Save the content type
+    // Save the content type.
     node_type_save($content_type_defaults);
   }
 }
@@ -50,7 +54,7 @@ function fieldcontext_test_install_content_types() {
  * Install fields for testing.
  */
 function fieldcontext_test_install_fields() {
-  // Define context => field
+  // Define context => field.
   $fields = array(
     'brand' => array(
       'field_name' => 'field_brand',
@@ -65,89 +69,89 @@ function fieldcontext_test_install_fields() {
       'type' => 'number_integer',
     ),
   );
-  
-  // Create fields
-  foreach ($fields AS $field) {
+
+  // Create fields.
+  foreach ($fields as $field) {
     field_create_field($field);
   }
-  
-  // Define instances
+
+  // Define instances.
   $instances = array(
     'node_wine_context_field_brand' => array(
       'field_name' => 'field_brand',
       'entity_type' => 'node',
-      'bundle' => 'wine_context', 
+      'bundle' => 'wine_context',
       'label' => 'Brand',
       'settings' => array(
         'user_register_form' => 1,
-        // Define field context for this instance
+        // Define field context for this instance.
         'fieldcontext' => 'brand',
       ),
       'widget' => array(
         'type' => 'textfield',
-      ), 
+      ),
     ),
     'node_beer_context_field_brand' => array(
       'field_name' => 'field_brand',
       'entity_type' => 'node',
-      'bundle' => 'beer_context', 
+      'bundle' => 'beer_context',
       'label' => 'Brand',
       'settings' => array(
         'user_register_form' => 1,
-        // Define field context for this instance
+        // Define field context for this instance.
         'fieldcontext' => 'brand',
       ),
       'widget' => array(
         'type' => 'textfield',
-      ), 
+      ),
     ),
     'node_wine_context_field_year' => array(
       'field_name' => 'field_year',
       'entity_type' => 'node',
-      'bundle' => 'wine_context', 
+      'bundle' => 'wine_context',
       'label' => 'Production year',
       'settings' => array(
         'user_register_form' => 1,
-        // Define field context for this instance
+        // Define field context for this instance.
         'fieldcontext' => 'year',
       ),
       'widget' => array(
         'type' => 'number',
-      ), 
+      ),
     ),
     'node_beer_context_field_year' => array(
       'field_name' => 'field_year',
       'entity_type' => 'node',
-      'bundle' => 'beer_context', 
+      'bundle' => 'beer_context',
       'label' => 'Production year',
       'settings' => array(
         'user_register_form' => 1,
-        // Define field context for this instance
+        // Define field context for this instance.
         'fieldcontext' => 'year',
       ),
       'widget' => array(
         'type' => 'number',
-      ), 
+      ),
     ),
     'node_beer_context_field_purchase_year' => array(
       'field_name' => 'field_purchase_year',
       'entity_type' => 'node',
-      'bundle' => 'beer_context', 
+      'bundle' => 'beer_context',
       'label' => 'Purchase year',
       'settings' => array(
         'user_register_form' => 1,
-        // Define field context for this instance
+        // Define field context for this instance.
         'fieldcontext' => 'year1',
       ),
       'widget' => array(
         'type' => 'number',
-      ), 
-    ), 
+      ),
+    ),
   );
-  
-  // Create instances
-  foreach ($instances AS $instance) {
-    // Create an instance
+
+  // Create instances.
+  foreach ($instances as $instance) {
+    // Create an instance.
     field_create_instance($instance);
   }
 }

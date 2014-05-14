@@ -1,16 +1,22 @@
 <?php
 
 /**
+ * @file
+ * API documentation for Field context module. 
+ */
+
+/**
  * Implements hook_fieldcontext_option_info().
  */
 function hook_fieldcontext_option_info() {
   return array(
-    // This option is not valid because option key does not match the validity pattern.
-    // See fieldcontext_value_pattern().
+    // This option is not valid because option key does not match the validity
+    // pattern. See fieldcontext_value_pattern().
     'nove mber %' => array(
       'title' => t('November'),
     ),
-    // The following options are valid and will be displayed in field instance edit form.
+    // The following options are valid and will be displayed in field instance
+    // edit form.
     'december' => array(
       'title' => t('December'),
       'group' => 'winter',
@@ -31,7 +37,8 @@ function hook_fieldcontext_option_info() {
       'group' => 'spring',
       'weight' => 0,
     ),
-    // The following options will not be grouped in select option as no "group" attribute is specified.
+    // The following options will not be grouped in select option as no "group"
+    // attribute is specified.
     'april' => array(
       'title' => t('April'),
       'weight' => 0,
@@ -60,7 +67,7 @@ function hook_fieldcontext_option_group_info() {
 }
 
 /**
- * Alter predefined field context options
+ * Alter predefined field context options.
  */
 function hook_fieldcontext_options_alter(&$options) {
   $options['foo'] = t('Bar');
@@ -74,7 +81,7 @@ function hook_fieldcontext_value_pattern_alter(&$pattern) {
 }
 
 /**
- * Alter allowed field context value pattern description that is displayed to the user.
+ * Alter allowed field context value pattern description.
  */
 function hook_fieldcontext_value_pattern_description_text_alter(&$text) {
   $text = t('alphanumeric values, underscores or dashes');

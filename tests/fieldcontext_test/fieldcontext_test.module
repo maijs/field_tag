@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Field context Test module.
+ */
+
+/**
  * Implements hook_fieldcontext_option_info().
  */
 function fieldcontext_test_fieldcontext_option_info() {
@@ -56,7 +61,7 @@ function fieldcontext_test_fieldcontext_option_group_info() {
 }
 
 /**
- * Alter predefined field context options
+ * Alter predefined field context options.
  */
 function fieldcontext_test_fieldcontext_options_alter(&$options) {
   $options['june'] = t('June');
@@ -70,7 +75,7 @@ function fieldcontext_test_fieldcontext_value_pattern_alter(&$pattern) {
 }
 
 /**
- * Alter allowed field context value pattern description that is displayed to the user.
+ * Alter allowed field context value pattern description.
  */
 function fieldcontext_test_fieldcontext_value_pattern_description_text_alter(&$text) {
   $text = t('alphanumeric values, underscores, dashes or dollar sign');

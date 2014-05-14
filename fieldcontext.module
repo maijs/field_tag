@@ -1,91 +1,99 @@
 <?php
 
 /**
- * Allowed context value pattern
+ * @file
+ * Field context module.
+ */
+
+/**
+ * Allowed context value pattern.
  */
 function fieldcontext_value_pattern() {
   $result = '/^[A-Za-z0-9\-_.]+$/';
-  
-  // Allow other modules modify context value pattern
+
+  // Allow other modules modify context value pattern.
   drupal_alter('fieldcontext_value_pattern', $result);
-  
+
   return $result;
 }
 
 /**
- * Allowed context value pattern text
+ * Allowed context value pattern text.
  */
 function fieldcontext_value_pattern_description_text() {
   $result = t('alphanumeric values, underscores or dashes');
-  
-  // Allow other modules modify value pattern description
+
+  // Allow other modules modify value pattern description.
   drupal_alter('fieldcontext_value_pattern_description_text', $result);
-  
+
   return $result;
 }
 
 /**
- * Field instance context options
+ * Field instance context options.
  */
 function fieldcontext_options() {
   $result = &drupal_static(__FUNCTION__, NULL);
-  
+
   if (is_null($result)) {
     $result = array();
-    
-    // Get option groups from modules that implement 'hook_fieldcontext_option_group_info()'
+
+    // Get option groups from modules that implement
+    // 'hook_fieldcontext_option_group_info()'.
     $option_group_info = module_invoke_all('fieldcontext_option_group_info');
-    
-    // Sort groups by weight
+
+    // Sort groups by weight.
     uasort($option_group_info, 'drupal_sort_weight');
-    
-    // Get options from modules that implement 'fieldcontext_option_info()'
+
+    // Get options from modules that implement 'fieldcontext_option_info()'.
     $option_info = module_invoke_all('fieldcontext_option_info');
-    
-    // Sort options by weight
+
+    // Sort options by weight.
     uasort($option_info, 'drupal_sort_weight');
-    
-    // Loop through all context option groups
-    foreach ($option_group_info AS $group) {
-      // Check if group title is set
+
+    // Loop through all context option groups so that groups are
+    // displayed first.
+    foreach ($option_group_info as $group) {
+      // Check if group title is set.
       if (isset($group['title'])) {
         $result[$group['title']] = array();
       }
     }
-    
-    // Get a valid context value pattern
+
+    // Get a valid context value pattern.
     $key_pattern = fieldcontext_value_pattern();
-    
-    // Loop through all context options
-    foreach ($option_info AS $option_key => $option) {
-      // Check if option title is set
+
+    // Loop through all context options.
+    foreach ($option_info as $option_key => $option) {
+      // Check if option title is set.
       if (isset($option['title'])) {
-        // Check if option key matches the valid pattern 
+        // Check if option key matches the valid pattern.
         if (preg_match($key_pattern, $option_key)) {
           $option_title = $option['title'];
-        
-          // Check if option group title is set
+
+          // Check if option group title is set.
           if (isset($option['group'], $option_group_info[$option['group']]['title'])) {
             $group_title = $option_group_info[$option['group']]['title'];
-          
-            // Set option in a group
+
+            // Set option in a group.
             $result[$group_title][$option_key] = $option_title;
           }
-          // A case if no group is specified
+          // A case if no group is specified.
           else {
             $result[$option_key] = $option_title;
           }
-        } else {
-          // Add a message to watchdog about invalid option key
+        }
+        else {
+          // Add a message to watchdog about invalid option key.
           watchdog('fieldcontext', 'Field context option key "%option_key" is not valid.', array('%option_key' => $option_key), WATCHDOG_NOTICE);
         }
       }
     }
-    
-    // Filter out empty groups
+
+    // Filter out empty groups.
     $result = array_filter($result);
-    
-    // Allow other modules modify field context options
+
+    // Allow other modules modify field context options.
     drupal_alter('fieldcontext_options', $result);
   }
 
@@ -93,37 +101,39 @@ function fieldcontext_options() {
 }
 
 /**
- * Return a single field name that correspond to given context in a entity type bundle.
+ * Return a single field name, given a context in a entity type bundle.
  */
 function fieldcontext_get_field_name($context, $entity_type, $bundle, $preg_match = FALSE) {
-  // Single field names may be obtained only if entity type and bundle is specified
+  // Single field names may be obtained only if entity type and bundle
+  // is specified.
   if (!empty($entity_type) && !empty($bundle)) {
     $result = fieldcontext_get_field_name_multiple($context, $entity_type, $bundle, $preg_match);
-    
+
     if (!empty($result)) {
       return reset($result);
     }
   }
-  
+
   return NULL;
 }
 
 /**
- * Compate two context strings
+ * Compare two context strings.
  */
 function fieldcontext_compare_context_strings($context, $other_context, $preg_match = FALSE) {
   $result = FALSE;
-  
-  // Compare using preg_match()
+
+  // Compare using preg_match().
   if (!empty($preg_match)) {
-    // Validate user provided pattern before actually matching it (other PHP will throw an error)
+    // Validate user provided pattern before actually matching it.
+    // Otherwise PHP will throw an error).
     $valid_pattern = '/\/.*\//i';
 
     if (preg_match($valid_pattern, $context) && preg_match($context, $other_context)) {
       $result = TRUE;
     }
   }
-  // Use simple string comparison
+  // Use simple string comparison.
   else {
     if ($context == $other_context) {
       $result = TRUE;
@@ -137,40 +147,44 @@ function fieldcontext_compare_context_strings($context, $other_context, $preg_ma
  * Return field names that correspond to given context in a entity type bundle.
  *
  * @param string $context
- *   The context that is attached to the field (regular string or a valid pattern for preg_match()).
+ *   The context that is attached to the field (regular string or a valid 
+ *   pattern for preg_match()).
  * @param string $entity_type
  *   The type of $entity; e.g., 'node' or 'user'.
  * @param string $bundle
- *   The entity bundle which contains the field to which the context is attached.
- * @param boolean $preg_match
- *   A bool whether $context variable contains a pattern for preg_match() in which case preg_match() 
- *   is used for context comparison.
+ *   The entity bundle which contains the field to which a context is attached.
+ * @param bool $preg_match
+ *   A bool whether $context variable contains a pattern for preg_match() in
+ *   which case preg_match() is used for context comparison.
+ *
  * @return array
  *   An array containing field names that have given context.
  *
- *   Note: If $entity_type or $bundle is not specified, the array is keyed by entity type, bundle and field name.
- *         If $entity_type and $bundle is specified, the array is keyed by field name.
+ *   Note:
+ *   If $entity_type or $bundle is not specified, the array is keyed by entity
+ *   type, bundle and field name.
+ *   If $entity_type and $bundle is specified, the array is keyed by field name.
  */
 function fieldcontext_get_field_name_multiple($context, $entity_type = NULL, $bundle = NULL, $preg_match = FALSE) {
-  // Statically store results for all entity types and bundles
+  // Statically store results for all entity types and bundles.
   $stored_result = &drupal_static(__FUNCTION__, NULL);
   $result = array();
 
   if (empty($context)) {
     return $result;
   }
-  
-  // Fill $stored_result with all known field contexts
+
+  // Fill $stored_result with all known field contexts.
   if (is_null($stored_result)) {
     $stored_result = array();
-    
-    // Get field instances
+
+    // Get field instances.
     $instances = field_info_instances();
-    
-    // Loop through all entity types, bundle and fields
-    foreach ($instances AS $this_entity_type => $these_bundles) {
-      foreach ($these_bundles AS $this_bundle => $field_names) {
-        foreach ($field_names AS $field_name => $instance_info) {
+
+    // Loop through all entity types, bundle and fields.
+    foreach ($instances as $this_entity_type => $these_bundles) {
+      foreach ($these_bundles as $this_bundle => $field_names) {
+        foreach ($field_names as $field_name => $instance_info) {
           if (!empty($instance_info['settings']['fieldcontext'])) {
             $stored_result[$this_entity_type][$this_bundle][$field_name] = $instance_info['settings']['fieldcontext'];
           }
@@ -179,11 +193,12 @@ function fieldcontext_get_field_name_multiple($context, $entity_type = NULL, $bu
     }
   }
 
-  // If entity type and bundle is not specified, look through all fields in every entity type bundle for a context match
+  // If entity type and bundle is not specified, look through all fields in
+  // every entity type bundle for a context match.
   if (empty($entity_type) && empty($bundle)) {
-    foreach ($stored_result AS $this_entity_type => $these_bundles) {
-      foreach ($these_bundles AS $this_bundle => $field_names) {
-        foreach ($field_names AS $field_name => $this_context) {
+    foreach ($stored_result as $this_entity_type => $these_bundles) {
+      foreach ($these_bundles as $this_bundle => $field_names) {
+        foreach ($field_names as $field_name => $this_context) {
           if (fieldcontext_compare_context_strings($context, $this_context, $preg_match)) {
             $result[$this_entity_type][$this_bundle][$field_name] = $field_name;
           }
@@ -191,11 +206,12 @@ function fieldcontext_get_field_name_multiple($context, $entity_type = NULL, $bu
       }
     }
   }
-  // If entity type is not specified but bundle is, return all bundles in stored restults
-  else if (empty($entity_type)) {
-    foreach ($stored_result AS $this_entity_type => $these_bundles) {
+  // If entity type is not specified but bundle is, return all bundles in
+  // stored restults.
+  elseif (empty($entity_type)) {
+    foreach ($stored_result as $this_entity_type => $these_bundles) {
       if (!empty($these_bundles[$bundle])) {
-        foreach ($these_bundles[$bundle] AS $field_name => $this_context) {
+        foreach ($these_bundles[$bundle] as $field_name => $this_context) {
           if (fieldcontext_compare_context_strings($context, $this_context, $preg_match)) {
             $result[$this_entity_type][$bundle][$field_name] = $field_name;
           }
@@ -203,11 +219,12 @@ function fieldcontext_get_field_name_multiple($context, $entity_type = NULL, $bu
       }
     }
   }
-  // If entity type is specified but bundle is not, return all bundles in specified entity type
-  else if (empty($bundle)) {
+  // If entity type is specified but bundle is not, return all bundles in
+  // specified entity type.
+  elseif (empty($bundle)) {
     if (!empty($stored_result[$entity_type])) {
-      foreach ($stored_result[$entity_type] AS $this_bundle => $field_names) {
-        foreach ($field_names AS $field_name => $this_context) {
+      foreach ($stored_result[$entity_type] as $this_bundle => $field_names) {
+        foreach ($field_names as $field_name => $this_context) {
           if (fieldcontext_compare_context_strings($context, $this_context, $preg_match)) {
             $result[$entity_type][$this_bundle][$field_name] = $field_name;
           }
@@ -215,10 +232,11 @@ function fieldcontext_get_field_name_multiple($context, $entity_type = NULL, $bu
       }
     }
   }
-  // If entity type and bundle is specified, return all fields in specified bundles
-  else if (!empty($entity_type) && !empty($bundle)) {
+  // If entity type and bundle is specified, return all fields in specified
+  // bundles.
+  elseif (!empty($entity_type) && !empty($bundle)) {
     if (!empty($stored_result[$entity_type][$bundle])) {
-      foreach ($stored_result[$entity_type][$bundle] AS $field_name => $this_context) {
+      foreach ($stored_result[$entity_type][$bundle] as $field_name => $this_context) {
         if (fieldcontext_compare_context_strings($context, $this_context, $preg_match)) {
           $result[$field_name] = $field_name;
         }
@@ -230,7 +248,7 @@ function fieldcontext_get_field_name_multiple($context, $entity_type = NULL, $bu
 }
 
 /**
- * Alter field settings form and provide field instance context settings
+ * Alter field settings form and provide field instance context settings.
  */
 function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
   $field = $form['#field'];
@@ -238,41 +256,42 @@ function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) 
 
   if (!empty($field['bundles']) && is_array($field['bundles'])) {
     $settings = $instance['settings'];
-    
-    // Add validate handler that will save field instance context
+
+    // Add validate handler that will save field instance context.
     array_unshift($form['#validate'], 'fieldcontext_form_field_ui_field_edit_form_validate');
-    
-    // Add no-context options
+
+    // Add no-context options.
     $context_options_list = array('' => t('- None -'));
-    
-    // Get context options
+
+    // Get context options.
     $context_options_list += fieldcontext_options();
-    
-    // Add default 
-    // Allow user to define custom context
+
+    // Allow user to define custom context.
     $context_options_list['_custom'] = t('- Custom -');
-    
-    // Set default values
+
+    // Set default values.
     $context_options_value = '';
     $context_custom_value = '';
 
-    // Get saved value
+    // Get saved value.
     if (isset($settings['fieldcontext']) && $settings['fieldcontext'] != '') {
       $saved_context = $settings['fieldcontext'];
-      // Saved context is predefined, show it in options list, hide in custom context textfield
+      // Saved context is predefined, show it in options list, hide in custom
+      // context textfield.
       $option_validation = fieldcontext_option_validate($saved_context, $context_options_list);
-      
+
       if (!empty($option_validation)) {
         $context_options_value = $saved_context;
       }
-      // Saved context is custom, show "Custom" in options list, show context in textfield
+      // Saved context is custom, show "Custom" in options list, show context
+      // in textfield.
       else {
         $context_options_value = '_custom';
         $context_custom_value = $saved_context;
       }
     }
 
-    // Fieldset
+    // Define fieldset.
     $context_form = array(
       '#type' => 'fieldset',
       '#title' => t('Field context'),
@@ -280,8 +299,8 @@ function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) 
       '#collapsed' => FALSE,
       '#weight' => 15,
     );
-    
-    // Pre-defined context options
+
+    // Pre-defined context options.
     $context_form['context'] = array(
       '#type' => 'select',
       '#title' => t('Context'),
@@ -289,14 +308,14 @@ function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) 
       '#description' => t('Select the context of this field instance.'),
       '#options' => $context_options_list,
     );
-    
-    // User defined context
+
+    // User defined context.
     $context_form['context_custom'] = array(
       '#type' => 'textfield',
       '#title' => t('Context'),
       '#default_value' => $context_custom_value,
       '#description' => t('Specify custom context of this field instance (@allowed_fieldcontext_values).', array('@allowed_fieldcontext_values' => fieldcontext_value_pattern_description_text())),
-      // Show only when user wants to define custom context
+      // Show only when user wants to define custom context.
       '#states' => array(
         'visible' => array(
           ':input[name="instance[settings][fieldcontext][context]"]' => array(
@@ -311,82 +330,89 @@ function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) 
 }
 
 /**
- * Validation key in field context options
+ * Validation key in field context options.
  */
 function fieldcontext_option_validate($key, $options) {
   $match = array();
-  
+
   if (!empty($options) && is_array($options)) {
-    foreach ($options AS $option_key => $option) {
+    foreach ($options as $option_key => $option) {
       if (is_array($option)) {
         $match = array_merge($match, fieldcontext_option_validate($key, $option));
-      } else if ($option_key == $key) {
+      }
+      elseif ($option_key == $key) {
         $match[] = $option;
       }
     }
   }
-  
+
   return $match;
 }
 
 /**
- * Validation for "field_ui_field_edit_form" form
+ * Validation for "field_ui_field_edit_form" form.
  */
 function fieldcontext_form_field_ui_field_edit_form_validate($form, &$form_state) {
   $entity_type = $form['#instance']['entity_type'];
   $bundle = $form['#instance']['bundle'];
-  
-  // Default value ($context_value will eventually be saved to instance settings)
+
+  // Default value ($context_value will eventually be saved to instance
+  // settings).
   $context_value = '';
-  
+
   // Value from option list or custom? 'option' by default.
   $context_value_source = 'option';
-  
-  // Field names
+
+  // Set field names.
   $context_field_names = array(
     'option' => 'instance][settings][fieldcontext][context',
     'custom' => 'instance][settings][fieldcontext][context_custom',
   );
-  // Submitted instance setting values
+  // Submitted instance setting values.
   $submitted_values = &$form_state['values']['instance']['settings'];
 
   if (isset($submitted_values['fieldcontext']['context']) && $submitted_values['fieldcontext']['context'] != '') {
-    // Get context options
+    // Get context options.
     $context_options_list = fieldcontext_options();
-    
-    // Get submitted values
+
+    // Get submitted values.
     $context_options_value = $submitted_values['fieldcontext']['context'];
     $context_custom_value = $submitted_values['fieldcontext']['context_custom'];
-    
-    // If context ir predefined, save it, discard custom context
+
+    // If context ir predefined, save it, discard custom context.
     $option_validation = fieldcontext_option_validate($context_options_value, $context_options_list);
-    
+
     if (!empty($option_validation)) {
       $context_value = $context_options_value;
       $context_value_source = 'option';
     }
-    // Custom context is defined
-    else if (isset($context_custom_value) && $context_custom_value != '') {
-      // Check if alphanumeric value
+    // Custom context is defined.
+    elseif (isset($context_custom_value) && $context_custom_value != '') {
+      // Check if alphanumeric value.
       $key_pattern = fieldcontext_value_pattern();
-      
+
       if (!preg_match($key_pattern, $context_custom_value)) {
         form_set_error($context_field_names['custom'], t('Allowed field context values: @allowed_fieldcontext_values.', array('@allowed_fieldcontext_values' => fieldcontext_value_pattern_description_text())));
-      } else {
+      }
+      else {
         $context_value = $context_custom_value;
         $context_value_source = 'custom';
       }
     }
 
-    // Check if this context has already been set in other fields
+    // Check if this context has already been set in other fields.
     $field_names_with_context = fieldcontext_get_field_name_multiple($context_value, $entity_type, $bundle);
     $field_names_with_context = array_diff($field_names_with_context, array($form['#field']['field_name']));
-    
+
     if (!empty($field_names_with_context)) {
-      form_set_error($context_field_names[$context_value_source], t('The context %context has already been applied to the following fields: %fieldnames.', array('%context' => $context_value, '%fieldnames' => join(', ', $field_names_with_context))));
+      $message_args = array(
+        '%context' => $context_value,
+        '%fieldnames' => implode(', ', $field_names_with_context),
+      );
+      form_set_error($context_field_names[$context_value_source], t('The context %context has already been applied to the following fields: %fieldnames.', $message_args));
     }
   }
-  
-  // Save to database as 'fieldcontext'
+
+  // Save to database as 'fieldcontext'.
   $submitted_values['fieldcontext'] = $context_value;
 }
