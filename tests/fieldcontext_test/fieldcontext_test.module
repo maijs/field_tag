@@ -10,36 +10,23 @@
  */
 function fieldcontext_test_fieldcontext_option_info() {
   return array(
-    'nove mber %' => array(
-      'title' => t('November'),
+    'in valid %' => array(
+      'title' => t('Invalid context (should not appear in field context selection)'),
     ),
-    'december' => array(
-      'title' => t('December'),
-      'group' => 'winter',
+    'price' => array(
+      'title' => t('Price'),
+      'group' => 'price',
       'weight' => 0,
     ),
-    'january' => array(
-      'title' => t('January'),
-      'group' => 'winter',
+    'creation_year' => array(
+      'title' => t('Creation year'),
+      'group' => 'year',
       'weight' => 1,
     ),
-    'february' => array(
-      'title' => t('February'),
-      'group' => 'winter',
+    'purchase_year' => array(
+      'title' => t('Purchase year'),
+      'group' => 'year',
       'weight' => 2,
-    ),
-    'march' => array(
-      'title' => t('March'),
-      'group' => 'spring',
-      'weight' => 0,
-    ),
-    'april' => array(
-      'title' => t('April'),
-      'weight' => 0,
-    ),
-    'may' => array(
-      'title' => t('May'),
-      'weight' => 1,
     ),
   );
 }
@@ -49,12 +36,12 @@ function fieldcontext_test_fieldcontext_option_info() {
  */
 function fieldcontext_test_fieldcontext_option_group_info() {
   return array(
-    'winter' => array(
-      'title' => t('Winter'),
+    'price' => array(
+      'title' => t('Price group'),
       'weight' => 0,
     ),
-    'spring' => array(
-      'title' => t('Spring'),
+    'year' => array(
+      'title' => t('Year group'),
       'weight' => 1,
     ),
   );
@@ -64,7 +51,7 @@ function fieldcontext_test_fieldcontext_option_group_info() {
  * Alter predefined field context options.
  */
 function fieldcontext_test_fieldcontext_options_alter(&$options) {
-  $options['june'] = t('June');
+  $options['foobar'] = t('Foobar (this context has been added using alter function)');
 }
 
 /**
@@ -79,4 +66,20 @@ function fieldcontext_test_fieldcontext_value_pattern_alter(&$pattern) {
  */
 function fieldcontext_test_fieldcontext_value_pattern_description_text_alter(&$text) {
   $text = t('alphanumeric values, underscores, dashes or dollar sign');
+}
+
+/**
+ * Promotes node to the front page if price value is equal or greater than 1000.
+ */
+function fieldcontext_test_node_presave($node) {
+  // Get fields with context "price"
+  $price_field_name = fieldcontext_get_field_name('price', 'node', $node->type);
+  // Get price field values
+  $price_field_items = field_get_items('node', $node, $price_field_name);
+  // Promote the node to front page if price value is equal or greater than 1000.
+  if (!empty($price_field_items[0]['value'])) {
+    if ($price_field_items[0]['value'] >= 1000) {
+      $node->promote = 1;
+    }
+  }
 }
