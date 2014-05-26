@@ -15,14 +15,14 @@ class FieldContextWebTestCase extends DrupalWebTestCase {
   public function getContextMap() {
     return array(
       'node' => array(
-        'wine_context' => array(
-          'field_brand' => 'brand',
-          'field_year' => 'year',
+        'painting' => array(
+          'field_painting_price' => 'price',
+          'field_creation_year' => 'creation_year',
         ),
-        'beer_context' => array(
-          'field_brand' => 'brand',
-          'field_year' => 'year',
-          'field_purchase_year' => 'year1',
+        'drawing' => array(
+          'field_drawing_price' => 'price',
+          'field_creation_year' => 'creation_year',
+          'field_purchase_year' => 'purchase_year',
         ),
       ),
     );
@@ -85,14 +85,14 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $assert_message = 'Using context %context, entity type %entity_type and bundle %bundle to retrieve field name. Result is correct.';
 
     /*
-     * Check field name "field_brand" in "wine_context" bundle of "node"
+     * Check field name "field_price" in "painting" bundle of "node"
      * entity type.
     */
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['bundle'] = 'wine_context';
-    $args['field_name'] = 'field_brand';
+    $args['bundle'] = 'painting';
+    $args['field_name'] = 'field_painting_price';
     $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
 
     // Get result.
@@ -100,12 +100,12 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     // Assert identicality.
     $this->assertIdentical($result, $args['field_name'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
 
-    /* Check field name "field_year" in "beer_context" bundle. */
+    /* Check field name "field_creation_year" in "painting" bundle. */
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['bundle'] = 'beer_context';
-    $args['field_name'] = 'field_year';
+    $args['bundle'] = 'painting';
+    $args['field_name'] = 'field_creation_year';
     $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
 
     // Get result.
@@ -123,18 +123,18 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     // Assert message.
     $assert_message = 'Using context %context and entity type %entity_type to retrieve field names. Result is correct.';
 
-    /* Check field names with "year" context in "node" entity type. */
+    /* Check field names with "creation_year" context in "node" entity type. */
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['context'] = 'year';
+    $args['context'] = 'creation_year';
     $args['result'] = array(
       'node' => array(
-        'wine_context' => array(
-          'field_year' => 'field_year',
+        'painting' => array(
+          'field_creation_year' => 'field_creation_year',
         ),
-        'beer_context' => array(
-          'field_year' => 'field_year',
+        'drawing' => array(
+          'field_creation_year' => 'field_creation_year',
         ),
       ),
     );
@@ -144,18 +144,18 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     // Assert equality.
     $this->assertEqual($result, $args['result'], call_user_func('format_string', $assert_message, $this->getAssertionMessageArgs($args)));
 
-    /* Check field names with "brand" context in "node" entity type. */
+    /* Check field names with "price" context in "node" entity type. */
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['context'] = 'brand';
+    $args['context'] = 'price';
     $args['result'] = array(
       'node' => array(
-        'wine_context' => array(
-          'field_brand' => 'field_brand',
+        'painting' => array(
+          'field_painting_price' => 'field_painting_price',
         ),
-        'beer_context' => array(
-          'field_brand' => 'field_brand',
+        'drawing' => array(
+          'field_drawing_price' => 'field_drawing_price',
         ),
       ),
     );
@@ -176,12 +176,12 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $assert_message = 'Using context %context and bundle %bundle to retrieve field names. Result is correct.';
 
     // Set arguments.
-    $args['bundle'] = 'wine_context';
-    $args['context'] = 'year';
+    $args['bundle'] = 'drawing';
+    $args['context'] = 'creation_year';
     $args['result'] = array(
       'node' => array(
-        'wine_context' => array(
-          'field_year' => 'field_year',
+        'drawing' => array(
+          'field_creation_year' => 'field_creation_year',
         ),
       ),
     );
@@ -202,14 +202,14 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $assert_message = 'Using only context %context to retrieve field names. Result is correct.';
 
     // Set arguments.
-    $args['context'] = 'year';
+    $args['context'] = 'creation_year';
     $args['result'] = array(
       'node' => array(
-        'wine_context' => array(
-          'field_year' => 'field_year',
+        'painting' => array(
+          'field_creation_year' => 'field_creation_year',
         ),
-        'beer_context' => array(
-          'field_year' => 'field_year',
+        'drawing' => array(
+          'field_creation_year' => 'field_creation_year',
         ),
       ),
     );
@@ -230,14 +230,14 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $assert_message = 'Using context %context with preg_match flag to retrieve field names. Result is correct.';
 
     // Set arguments.
-    $args['context'] = '/year[\d]?/i';
+    $args['context'] = '/[\s]?year/i';
     $args['result'] = array(
       'node' => array(
-        'wine_context' => array(
-          'field_year' => 'field_year',
+        'painting' => array(
+          'field_creation_year' => 'field_creation_year',
         ),
-        'beer_context' => array(
-          'field_year' => 'field_year',
+        'drawing' => array(
+          'field_creation_year' => 'field_creation_year',
           'field_purchase_year' => 'field_purchase_year',
         ),
       ),
@@ -260,18 +260,15 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $this->drupalLogin($user);
 
     // Set arguments.
-    $args['bundle'] = 'wine_context';
-    $args['field_name'] = 'field_brand';
+    $args['bundle'] = 'painting';
+    $args['field_name'] = 'field_painting_price';
     $args['result'] = array(
       0 => '- None -',
-      1 => 'December',
-      2 => 'January',
-      3 => 'February',
-      4 => 'March',
-      5 => 'April',
-      6 => 'May',
-      7 => 'June',
-      8 => '- Custom -',
+      1 => 'Price',
+      2 => 'Creation year',
+      3 => 'Purchase year',
+      4 => 'Foobar (this context has been added using alter function)',
+      5 => '- Custom -',
     );
 
     // Get field instance edit form.
@@ -305,8 +302,8 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $this->drupalLogin($user);
 
     // Set arguments.
-    $args['bundle'] = 'wine_context';
-    $args['field_name'] = 'field_brand';
+    $args['bundle'] = 'painting';
+    $args['field_name'] = 'field_painting_price';
     $args['result'] = sprintf('Specify custom context of this field instance (%s).', 'alphanumeric values, underscores, dashes or dollar sign');
 
     // Get field instance edit form.
@@ -335,8 +332,8 @@ class FieldContextTestCase extends FieldContextWebTestCase {
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['bundle'] = 'wine_context';
-    $args['field_name'] = 'field_brand';
+    $args['bundle'] = 'painting';
+    $args['field_name'] = 'field_painting_price';
 
     // Set invalid context and assert message.
     $args['context'] = 'N*t v@l1d';
