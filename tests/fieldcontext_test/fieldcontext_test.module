@@ -72,11 +72,12 @@ function fieldcontext_test_fieldcontext_value_pattern_description_text_alter(&$t
  * Promotes node to the front page if price value is equal or greater than 1000.
  */
 function fieldcontext_test_node_presave($node) {
-  // Get fields with context "price"
+  // Get fields with context "price".
   $price_field_name = fieldcontext_get_field_name('price', 'node', $node->type);
-  // Get price field values
+  // Get price field values.
   $price_field_items = field_get_items('node', $node, $price_field_name);
-  // Promote the node to front page if price value is equal or greater than 1000.
+  // Promote the node to front page if price value is equal or
+  // greater than 1000.
   if (!empty($price_field_items[0]['value'])) {
     if ($price_field_items[0]['value'] >= 1000) {
       $node->promote = 1;

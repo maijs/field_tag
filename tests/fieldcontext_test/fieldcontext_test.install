@@ -88,7 +88,7 @@ function fieldcontext_test_install_fields() {
     'node_painting_context_field_painting_price' => array(
       'field_name' => 'field_painting_price',
       'entity_type' => 'node',
-      'bundle' => 'painting', 
+      'bundle' => 'painting',
       'label' => 'Price',
       'description' => 'Price of the painting.',
       'settings' => array(
@@ -103,7 +103,7 @@ function fieldcontext_test_install_fields() {
     'node_drawing_context_field_drawing_price' => array(
       'field_name' => 'field_drawing_price',
       'entity_type' => 'node',
-      'bundle' => 'drawing', 
+      'bundle' => 'drawing',
       'label' => 'Price',
       'description' => 'Price of the drawing.',
       'settings' => array(
@@ -118,7 +118,7 @@ function fieldcontext_test_install_fields() {
     'node_painting_context_field_creation_year' => array(
       'field_name' => 'field_creation_year',
       'entity_type' => 'node',
-      'bundle' => 'painting', 
+      'bundle' => 'painting',
       'label' => 'Creation year',
       'description' => 'The year in which painting was created.',
       'settings' => array(
@@ -133,7 +133,7 @@ function fieldcontext_test_install_fields() {
     'node_drawing_context_field_creation_year' => array(
       'field_name' => 'field_creation_year',
       'entity_type' => 'node',
-      'bundle' => 'drawing', 
+      'bundle' => 'drawing',
       'label' => 'Creation year',
       'description' => 'The year in which drawing was created.',
       'settings' => array(
@@ -148,7 +148,7 @@ function fieldcontext_test_install_fields() {
     'node_drawing_context_field_purchase_year' => array(
       'field_name' => 'field_purchase_year',
       'entity_type' => 'node',
-      'bundle' => 'drawing', 
+      'bundle' => 'drawing',
       'label' => 'Purchase year',
       'description' => 'The year in which drawing was purchased.',
       'settings' => array(

@@ -124,7 +124,7 @@ function fieldcontext_rules_action_field_get_from_context_assertions($element) {
     if (!empty($field_properties[$type])) {
       $assertions = array();
       // Loop through all the bundles.
-      foreach ($field_properties[$type] as $bundle => $fieldcontext) {
+      foreach ($field_properties[$type] as $fieldcontext) {
         // Loop through fields with a context.
         foreach ($fieldcontext as $field_property) {
           // Add field property to property info list.
