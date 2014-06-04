@@ -147,7 +147,7 @@ function fieldcontext_compare_context_strings($context, $other_context, $preg_ma
  * Return field names that correspond to given context in a entity type bundle.
  *
  * @param string $context
- *   The context that is attached to the field (regular string or a valid 
+ *   The context that is attached to the field (regular string or a valid
  *   pattern for preg_match()).
  * @param string $entity_type
  *   The type of $entity; e.g., 'node' or 'user'.

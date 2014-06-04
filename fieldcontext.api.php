@@ -2,7 +2,7 @@
 
 /**
  * @file
- * API documentation for Field context module. 
+ * API documentation for Field context module.
  */
 
 /**
