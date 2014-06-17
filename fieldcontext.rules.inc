@@ -111,7 +111,9 @@ function fieldcontext_rules_action_field_get_from_context(EntityDrupalWrapper $w
  */
 function fieldcontext_rules_action_field_get_from_context_assertions($element) {
   // Assert the field is there if the condition matches.
-  if ($wrapper = $element->applyDataSelector($element->settings['entity:select'])) {
+  $wrapper = $element->applyDataSelector($element->settings['entity:select']);
+
+  if (!empty($wrapper)) {
     // Get variables.
     $type = $wrapper->type();
     $context = $element->settings['context'];
