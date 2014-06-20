@@ -29,6 +29,13 @@ class FieldContextWebTestCase extends DrupalWebTestCase {
   }
 
   /**
+   * Set up a Drupal site.
+   */
+  protected function setUp() {
+    parent::setUp(array('fieldcontext_test'));
+  }
+
+  /**
    * Get assertion message arguments.
    */
   public function getAssertionMessageArgs($args) {
@@ -77,8 +84,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test for field context with entity type and bundle.
    */
   public function testFieldContextWithEntityTypeAndBundle() {
-    module_enable(array('fieldcontext_test'));
-
     // Get field name => context map.
     $context_map = $this->getContextMap();
     // Assert message.
@@ -118,8 +123,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test for field context with entity type.
    */
   public function testFieldContextWithEntityType() {
-    module_enable(array('fieldcontext_test'));
-
     // Assert message.
     $assert_message = 'Using context %context and entity type %entity_type to retrieve field names. Result is correct.';
 
@@ -170,8 +173,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test for field context with bundle.
    */
   public function testFieldContextWithBundle() {
-    module_enable(array('fieldcontext_test'));
-
     // Assert message.
     $assert_message = 'Using context %context and bundle %bundle to retrieve field names. Result is correct.';
 
@@ -196,8 +197,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test for field using only context.
    */
   public function testFieldContextOnly() {
-    module_enable(array('fieldcontext_test'));
-
     // Assert message.
     $assert_message = 'Using only context %context to retrieve field names. Result is correct.';
 
@@ -224,8 +223,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test for field using only context (with "preg_match" flag).
    */
   public function testFieldContextOnlyWithPregMatch() {
-    module_enable(array('fieldcontext_test'));
-
     // Assert message.
     $assert_message = 'Using context %context with preg_match flag to retrieve field names. Result is correct.';
 
@@ -253,8 +250,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test presence of predefined context options in field instance edit form.
    */
   public function testPredefinedOptionsInFieldInstanceForm() {
-    module_enable(array('fieldcontext_test'));
-
     // Create user and login.
     $user = $this->drupalCreateUser(array('administer content types'));
     $this->drupalLogin($user);
@@ -295,8 +290,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test presence of pattern description in field instance edit form.
    */
   public function testPatternDescriptionInFieldInstanceForm() {
-    module_enable(array('fieldcontext_test'));
-
     // Create user and login.
     $user = $this->drupalCreateUser(array('administer content types'));
     $this->drupalLogin($user);
@@ -324,8 +317,6 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    * Test validation of field instance edit form submission.
    */
   public function testFieldInstanceFormSubmit() {
-    module_enable(array('fieldcontext_test'));
-
     // Create user and login.
     $user = $this->drupalCreateUser(array('administer content types'));
     $this->drupalLogin($user);
