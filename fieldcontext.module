@@ -7,6 +7,9 @@
 
 /**
  * Allowed context value pattern.
+ *
+ * @return string
+ *   Regular expression pattern for valid field context value.
  */
 function fieldcontext_value_pattern() {
   $result = '/^[A-Za-z0-9\-_.]+$/';
@@ -19,6 +22,9 @@ function fieldcontext_value_pattern() {
 
 /**
  * Allowed context value pattern text.
+ *
+ * @return string
+ *   Human readable description of valid field context values.
  */
 function fieldcontext_value_pattern_description_text() {
   $result = t('alphanumeric values, underscores or dashes');
@@ -31,6 +37,12 @@ function fieldcontext_value_pattern_description_text() {
 
 /**
  * Field instance context options.
+ *
+ * Option groups and options are gathered from modules that implement
+ * "fieldcontext_option_group_info" and "fieldcontext_option_info" hooks.
+ *
+ * @return array
+ *   An array of predefined field context option groups and options.
  */
 function fieldcontext_options() {
   $result = &drupal_static(__FUNCTION__, NULL);
@@ -102,6 +114,20 @@ function fieldcontext_options() {
 
 /**
  * Return a single field name, given a context in a entity type bundle.
+ *
+ * @param string $context
+ *   The context of the field.
+ * @param string $entity_type
+ *   The entity type.
+ * @param string $bundle
+ *   The bundle which contains the field.
+ * @param bool $preg_match
+ *   (Optional) A boolean indicating whether $context parameter contains regular
+ *   expression that should be used for field context matching. If true,
+ *   preg_match() is used for string comparison.
+ *
+ * @return string
+ *   A single field name that has given context.
  */
 function fieldcontext_get_field_name($context, $entity_type, $bundle, $preg_match = FALSE) {
   // Single field names may be obtained only if entity type and bundle
@@ -119,6 +145,18 @@ function fieldcontext_get_field_name($context, $entity_type, $bundle, $preg_matc
 
 /**
  * Compare two context strings.
+ *
+ * @param string $context
+ *   The context string.
+ * @param string $other_context
+ *   The string that $context should be matched against.
+ * @param bool $preg_match
+ *   (Optional) A boolean indicating whether $context parameter contains regular
+ *   expression that should be used for field context matching. If true,
+ *   preg_match() is used for string comparison.
+ *
+ * @return bool
+ *   A boolean value whether strings match.
  */
 function fieldcontext_compare_context_strings($context, $other_context, $preg_match = FALSE) {
   $result = FALSE;
@@ -148,19 +186,19 @@ function fieldcontext_compare_context_strings($context, $other_context, $preg_ma
  *
  * @param string $context
  *   The context that is attached to the field (regular string or a valid
- *   pattern for preg_match()).
+ *   regular expression pattern for preg_match()).
  * @param string $entity_type
- *   The type of $entity; e.g., 'node' or 'user'.
+ *   The entity type.
  * @param string $bundle
- *   The entity bundle which contains the field to which a context is attached.
+ *   The bundle which contains the field.
  * @param bool $preg_match
- *   A bool whether $context variable contains a pattern for preg_match() in
- *   which case preg_match() is used for context comparison.
+ *   (Optional) A boolean indicating whether $context parameter contains regular
+ *   expression that should be used for field context matching. If true,
+ *   preg_match() is used for string comparison.
  *
  * @return array
  *   An array containing field names that have given context.
  *
- *   Note:
  *   If $entity_type or $bundle is not specified, the array is keyed by entity
  *   type, bundle and field name.
  *   If $entity_type and $bundle is specified, the array is keyed by field name.
@@ -278,7 +316,7 @@ function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) 
       $saved_context = $settings['fieldcontext'];
       // Saved context is predefined, show it in options list, hide in custom
       // context textfield.
-      $option_validation = fieldcontext_option_validate($saved_context, $context_options_list);
+      $option_validation = fieldcontext_is_context_predefined($saved_context, $context_options_list);
 
       if (!empty($option_validation)) {
         $context_options_value = $saved_context;
@@ -330,15 +368,24 @@ function fieldcontext_form_field_ui_field_edit_form_alter(&$form, &$form_state) 
 }
 
 /**
- * Validation key in field context options.
+ * Returns true if context is predefined.
+ *
+ * @param string $key
+ *   The context string.
+ * @param array $options
+ *   The string that $context should be matched against.
+ *
+ * @return array
+ *   An array with a matched field context. If an array is empty, the field
+ *   context is not predefined.
  */
-function fieldcontext_option_validate($key, $options) {
+function fieldcontext_is_context_predefined($key, array $options) {
   $match = array();
 
   if (!empty($options) && is_array($options)) {
     foreach ($options as $option_key => $option) {
       if (is_array($option)) {
-        $match = array_merge($match, fieldcontext_option_validate($key, $option));
+        $match = array_merge($match, fieldcontext_is_context_predefined($key, $option));
       }
       elseif ($option_key == $key) {
         $match[] = $option;
@@ -380,7 +427,7 @@ function fieldcontext_form_field_ui_field_edit_form_validate($form, &$form_state
     $context_custom_value = $submitted_values['fieldcontext']['context_custom'];
 
     // If context ir predefined, save it, discard custom context.
-    $option_validation = fieldcontext_option_validate($context_options_value, $context_options_list);
+    $option_validation = fieldcontext_is_context_predefined($context_options_value, $context_options_list);
 
     if (!empty($option_validation)) {
       $context_value = $context_options_value;

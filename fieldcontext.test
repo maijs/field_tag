@@ -67,7 +67,7 @@ class FieldContextTestCase extends FieldContextWebTestCase {
    */
   public static function getInfo() {
     return array(
-      'name' => 'Field Context Test',
+      'name' => 'Field context tests',
       'description' => 'Ensure that the fieldcontext module returns accurate data.',
       'group' => 'Field context',
     );

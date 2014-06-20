@@ -1,17 +1,17 @@
 Field context
 =============
 
-Field context module provides a way for developers to reference field instances 
-in abstract terms rather than actual field names, allowing you to write a 
+Field context module provides a way for developers to reference field instances
+in abstract terms rather than actual field names, allowing you to write a
 future-proof code in cases where exact field names need to be known.
 
-You only need to enabled it if a module depends on it or if you want to 
+You only need to enabled it if a module depends on it or if you want to
 integrate it in your own development.
 
 Installation
 ------------
 
-Install it just like any other Drupal module - place it in the modules 
+Install it just like any other Drupal module - place it in the modules
 directory for your site and enable it on the "admin/modules" page.
 
 Usage
@@ -21,7 +21,7 @@ Note: Although Field context does not have a hard dependency on Field UI
 module, you have to enable Field UI (field_ui) module in order to be able to
 set contexts for fields via user interface.
 
-A field context can be set in the form that adds or edits field instances for 
+A field context can be set in the form that adds or edits field instances for
 any bundle of any entity.
 
 ### Nodes
@@ -61,22 +61,22 @@ in field instance settings when they are exported via Features.
 Use case
 --------
 
-Your client wants to have a website that lists his paintings and drawings, with 
-all paintings and drawings with price over € 1000 promoted to the front page 
-automatically. Your client also wants to be able to add different types of art 
-in the future himself and also have them promoted to the front page using the 
+Your client wants to have a website that lists his paintings and drawings, with
+all paintings and drawings with price over € 1000 promoted to the front page
+automatically. Your client also wants to be able to add different types of art
+in the future himself and also have them promoted to the front page using the
 same price threshold.
 
 As a developer, you do the following:
 
 1. Create two node content types: Painting and Drawing.
-2. Add a field "Price" (field_painting_price) that is attached to Painting 
+2. Add a field "Price" (field_painting_price) that is attached to Painting
 content type, and assign "price" context to the field.
-3. Add a field "Price" (field_drawing_price) that is attached to Drawing 
+3. Add a field "Price" (field_drawing_price) that is attached to Drawing
 content type, and assign "price" context to the field.
-4. Create a hook that sets $node->promote to 1 upon node saving if the field 
+4. Create a hook that sets $node->promote to 1 upon node saving if the field
 value with "price" context is greater that 1000.
-5. Instruct your client that when he creates a Sculpture node content type and 
-adds a field "Price" (field_oh_thisis_f0r_price_right) to the Sculpture content 
-type himself in the future, he merely needs to select "Price" context for the 
+5. Instruct your client that when he creates a Sculpture node content type and
+adds a field "Price" (field_oh_thisis_f0r_price_right) to the Sculpture content
+type himself in the future, he merely needs to select "Price" context for the
 field in order to have expensive sculptures promoted to the front page.
