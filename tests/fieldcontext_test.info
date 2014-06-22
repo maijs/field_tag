@@ -1,7 +1,7 @@
 name = Field context Test
-description = Provides test data for Field context module tests.
+description = Provides sample data for Field context module test cases.
 core = 7.x
-package = Testing
+package = Field context
 dependencies[] = node
 dependencies[] = field
 dependencies[] = field_ui

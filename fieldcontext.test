@@ -15,14 +15,14 @@ class FieldContextWebTestCase extends DrupalWebTestCase {
   public function getContextMap() {
     return array(
       'node' => array(
-        'painting' => array(
-          'field_painting_price' => 'price',
-          'field_creation_year' => 'creation_year',
+        'painting_test' => array(
+          'field_painting_price_test' => 'price',
+          'field_creation_year_test' => 'creation_year',
         ),
-        'drawing' => array(
-          'field_drawing_price' => 'price',
-          'field_creation_year' => 'creation_year',
-          'field_purchase_year' => 'purchase_year',
+        'drawing_test' => array(
+          'field_drawing_price_test' => 'price',
+          'field_creation_year_test' => 'creation_year',
+          'field_purchase_year_test' => 'purchase_year',
         ),
       ),
     );
@@ -96,8 +96,8 @@ class FieldContextTestCase extends FieldContextWebTestCase {
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['bundle'] = 'painting';
-    $args['field_name'] = 'field_painting_price';
+    $args['bundle'] = 'painting_test';
+    $args['field_name'] = 'field_painting_price_test';
     $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
 
     // Get result.
@@ -109,8 +109,8 @@ class FieldContextTestCase extends FieldContextWebTestCase {
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['bundle'] = 'painting';
-    $args['field_name'] = 'field_creation_year';
+    $args['bundle'] = 'painting_test';
+    $args['field_name'] = 'field_creation_year_test';
     $args['context'] = $context_map[$args['entity_type']][$args['bundle']][$args['field_name']];
 
     // Get result.
@@ -133,11 +133,11 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $args['context'] = 'creation_year';
     $args['result'] = array(
       'node' => array(
-        'painting' => array(
-          'field_creation_year' => 'field_creation_year',
+        'painting_test' => array(
+          'field_creation_year_test' => 'field_creation_year_test',
         ),
-        'drawing' => array(
-          'field_creation_year' => 'field_creation_year',
+        'drawing_test' => array(
+          'field_creation_year_test' => 'field_creation_year_test',
         ),
       ),
     );
@@ -154,11 +154,11 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $args['context'] = 'price';
     $args['result'] = array(
       'node' => array(
-        'painting' => array(
-          'field_painting_price' => 'field_painting_price',
+        'painting_test' => array(
+          'field_painting_price_test' => 'field_painting_price_test',
         ),
-        'drawing' => array(
-          'field_drawing_price' => 'field_drawing_price',
+        'drawing_test' => array(
+          'field_drawing_price_test' => 'field_drawing_price_test',
         ),
       ),
     );
@@ -177,12 +177,12 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $assert_message = 'Using context %context and bundle %bundle to retrieve field names. Result is correct.';
 
     // Set arguments.
-    $args['bundle'] = 'drawing';
+    $args['bundle'] = 'drawing_test';
     $args['context'] = 'creation_year';
     $args['result'] = array(
       'node' => array(
-        'drawing' => array(
-          'field_creation_year' => 'field_creation_year',
+        'drawing_test' => array(
+          'field_creation_year_test' => 'field_creation_year_test',
         ),
       ),
     );
@@ -204,11 +204,11 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $args['context'] = 'creation_year';
     $args['result'] = array(
       'node' => array(
-        'painting' => array(
-          'field_creation_year' => 'field_creation_year',
+        'painting_test' => array(
+          'field_creation_year_test' => 'field_creation_year_test',
         ),
-        'drawing' => array(
-          'field_creation_year' => 'field_creation_year',
+        'drawing_test' => array(
+          'field_creation_year_test' => 'field_creation_year_test',
         ),
       ),
     );
@@ -230,12 +230,12 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $args['context'] = '/[\s]?year/i';
     $args['result'] = array(
       'node' => array(
-        'painting' => array(
-          'field_creation_year' => 'field_creation_year',
+        'painting_test' => array(
+          'field_creation_year_test' => 'field_creation_year_test',
         ),
-        'drawing' => array(
-          'field_creation_year' => 'field_creation_year',
-          'field_purchase_year' => 'field_purchase_year',
+        'drawing_test' => array(
+          'field_creation_year_test' => 'field_creation_year_test',
+          'field_purchase_year_test' => 'field_purchase_year_test',
         ),
       ),
     );
@@ -255,8 +255,8 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $this->drupalLogin($user);
 
     // Set arguments.
-    $args['bundle'] = 'painting';
-    $args['field_name'] = 'field_painting_price';
+    $args['bundle'] = 'painting_test';
+    $args['field_name'] = 'field_painting_price_test';
     $args['result'] = array(
       0 => '- None -',
       1 => 'Price',
@@ -295,8 +295,8 @@ class FieldContextTestCase extends FieldContextWebTestCase {
     $this->drupalLogin($user);
 
     // Set arguments.
-    $args['bundle'] = 'painting';
-    $args['field_name'] = 'field_painting_price';
+    $args['bundle'] = 'painting_test';
+    $args['field_name'] = 'field_painting_price_test';
     $args['result'] = sprintf('Specify custom context of this field instance (%s).', 'alphanumeric values, underscores, dashes or dollar sign');
 
     // Get field instance edit form.
@@ -323,8 +323,8 @@ class FieldContextTestCase extends FieldContextWebTestCase {
 
     // Set arguments.
     $args['entity_type'] = 'node';
-    $args['bundle'] = 'painting';
-    $args['field_name'] = 'field_painting_price';
+    $args['bundle'] = 'painting_test';
+    $args['field_name'] = 'field_painting_price_test';
 
     // Set invalid context and assert message.
     $args['context'] = 'N*t v@l1d';

@@ -1,0 +1,274 @@
+<?php
+
+/**
+ * @file
+ * Installation routines for Field context Test module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function fieldcontext_test_install() {
+  // Install test content types.
+  fieldcontext_test_install_content_types();
+  // Install test fields.
+  fieldcontext_test_install_fields();
+}
+
+/**
+ * Returns content types required for testing.
+ *
+ * @return array
+ *   An array with content type definitions.
+ */
+function fieldcontext_test_install_get_content_types() {
+  $t = get_t();
+
+  return array(
+    'painting_test' => array(
+      'type' => 'painting_test',
+      'name' => $t('Painting'),
+      'base' => 'node_content',
+      'custom' => TRUE,
+      'description' => $t('This is an example painting node content type.'),
+      'body_label' => $t('Body'),
+    ),
+    'drawing_test' => array(
+      'type' => 'drawing_test',
+      'name' => $t('Drawing'),
+      'base' => 'node_content',
+      'custom' => TRUE,
+      'description' => $t('This is an example drawing node content type.'),
+      'body_label' => $t('Body'),
+    ),
+  );
+}
+
+/**
+ * Returns fields required for testing.
+ *
+ * @return array
+ *   An array with field definitions.
+ */
+function fieldcontext_test_install_get_fields() {
+  return array(
+    'painting_price_test' => array(
+      'field_name' => 'field_painting_price_test',
+      'type' => 'text',
+    ),
+    'drawing_price_test' => array(
+      'field_name' => 'field_drawing_price_test',
+      'type' => 'text',
+    ),
+    'creation_year_test' => array(
+      'field_name' => 'field_creation_year_test',
+      'type' => 'number_integer',
+    ),
+    'purchase_year_test' => array(
+      'field_name' => 'field_purchase_year_test',
+      'type' => 'number_integer',
+    ),
+  );
+}
+
+/**
+ * Returns field instances required for testing.
+ *
+ * @return array
+ *   An array with field instance definitions.
+ */
+function fieldcontext_test_install_get_field_instances() {
+  $t = get_t();
+
+  return array(
+    'node_painting_test_context_field_painting_price_test' => array(
+      'field_name' => 'field_painting_price_test',
+      'entity_type' => 'node',
+      'bundle' => 'painting_test',
+      'label' => $t('Price'),
+      'description' => $t('Price of the painting.'),
+      'settings' => array(
+        'user_register_form' => 1,
+        // Define field context for this instance.
+        'fieldcontext' => 'price',
+      ),
+      'widget' => array(
+        'type' => 'textfield',
+      ),
+    ),
+    'node_drawing_test_context_field_drawing_price_test' => array(
+      'field_name' => 'field_drawing_price_test',
+      'entity_type' => 'node',
+      'bundle' => 'drawing_test',
+      'label' => $t('Price'),
+      'description' => $t('Price of the drawing.'),
+      'settings' => array(
+        'user_register_form' => 1,
+        // Define field context for this instance.
+        'fieldcontext' => 'price',
+      ),
+      'widget' => array(
+        'type' => 'textfield',
+      ),
+    ),
+    'node_painting_test_context_field_creation_year_test' => array(
+      'field_name' => 'field_creation_year_test',
+      'entity_type' => 'node',
+      'bundle' => 'painting_test',
+      'label' => $t('Creation year'),
+      'description' => $t('The year in which painting was created.'),
+      'settings' => array(
+        'user_register_form' => 1,
+        // Define field context for this instance.
+        'fieldcontext' => 'creation_year',
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+    ),
+    'node_drawing_test_context_field_creation_year_test' => array(
+      'field_name' => 'field_creation_year_test',
+      'entity_type' => 'node',
+      'bundle' => 'drawing_test',
+      'label' => $t('Creation year'),
+      'description' => $t('The year in which drawing was created.'),
+      'settings' => array(
+        'user_register_form' => 1,
+        // Define field context for this instance.
+        'fieldcontext' => 'creation_year',
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+    ),
+    'node_drawing_test_context_field_purchase_year_test' => array(
+      'field_name' => 'field_purchase_year_test',
+      'entity_type' => 'node',
+      'bundle' => 'drawing_test',
+      'label' => $t('Purchase year'),
+      'description' => $t('The year in which drawing was purchased.'),
+      'settings' => array(
+        'user_register_form' => 1,
+        // Define field context for this instance.
+        'fieldcontext' => 'purchase_year',
+      ),
+      'widget' => array(
+        'type' => 'number',
+      ),
+    ),
+  );
+}
+
+/**
+ * Install content types for testing.
+ */
+function fieldcontext_test_install_content_types() {
+  $t = get_t();
+
+  // Get content types.
+  $content_types = fieldcontext_test_install_get_content_types();
+
+  // Get existing content types.
+  $existing_content_types = node_type_get_types();
+
+  // Existing content type registry.
+  $existing_type_registry = array();
+
+  // Create test node content types.
+  foreach ($content_types as $content_type) {
+    if (!isset($existing_content_types[$content_type['type']])) {
+      // Set defaults.
+      $content_type_defaults = node_type_set_defaults($content_type);
+      // Add body field.
+      node_add_body_field($content_type_defaults);
+      // Save the content type.
+      node_type_save($content_type_defaults);
+      // Do not promote to the frontpage by default.
+      variable_set('node_options_' . $content_type['type'], array('status'));
+    }
+    else {
+      $existing_type_registry[] = $content_type['name'];
+    }
+  }
+
+  if (!empty($existing_type_registry)) {
+    $t_args = array('%content-types' => implode(', ', $existing_type_registry));
+    drupal_set_message($t('The following content types already exist in the system: %content-types. They have not been recreated.', $t_args));
+  }
+}
+
+/**
+ * Install fields for testing.
+ */
+function fieldcontext_test_install_fields() {
+  $t = get_t();
+
+  // Get fields.
+  $fields = fieldcontext_test_install_get_fields();
+
+  // Get field info map.
+  $field_info_map = field_info_field_map();
+
+  // Existing field registry.
+  $existing_field_registry = array();
+
+  // Create fields.
+  foreach ($fields as $field) {
+    if (!isset($field_info_map[$field['field_name']])) {
+      // Create a field.
+      field_create_field($field);
+    }
+    else {
+      $existing_field_registry[] = $field['field_name'];
+    }
+  }
+
+  if (!empty($existing_field_registry)) {
+    $t_args = array('%field-names' => implode(', ', $existing_field_registry));
+    drupal_set_message($t('The following fields already exist in the system: %field-names. They have not been recreated.', $t_args));
+  }
+
+  // Update field info map after field creation.
+  $field_info_map = field_info_field_map();
+
+  // Get field instances.
+  $instances = fieldcontext_test_install_get_field_instances();
+
+  // Existing instance registry.
+  $existing_instance_registry = array();
+
+  // Create instances.
+  foreach ($instances as $instance) {
+    if (!isset($field_info_map[$instance['field_name']]['bundles'][$instance['entity_type']]) || !in_array($instance['bundle'], $field_info_map[$instance['field_name']]['bundles'][$instance['entity_type']])) {
+      // Create an instance.
+      field_create_instance($instance);
+    }
+    else {
+      // Update an instance.
+      field_update_instance($instance);
+      // Register existing instance.
+      $existing_instance_registry[] = $instance['label'];
+    }
+  }
+
+  if (!empty($existing_instance_registry)) {
+    $t_args = array('%instance-labels' => implode(', ', $existing_instance_registry));
+    drupal_set_message($t('The following field instances already exist in the system: %instance-labels. They have been updated with field contexts required for testing.', $t_args));
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function fieldcontext_test_uninstall() {
+  // Get content types provided by the module.
+  $content_types = fieldcontext_test_install_get_content_types();
+
+  foreach (array_keys($content_types) as $type) {
+    // Remove content type.
+    node_type_delete($type);
+
+    // Remove variables.
+    variable_del('node_options_' . $type);
+  }
+}

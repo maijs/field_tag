@@ -58,6 +58,13 @@ Integration with Features
 All field contexts associated with field instances are automatically included
 in field instance settings when they are exported via Features.
 
+Integration with Rules
+----------------------
+
+The module provides a Rules condition to determine whether an entity has a field
+with a particular context and an action to fetch the field name with a specified
+context.
+
 Use case
 --------
 
@@ -80,3 +87,10 @@ value with "price" context is greater that 1000.
 adds a field "Price" (field_oh_thisis_f0r_price_right) to the Sculpture content
 type himself in the future, he merely needs to select "Price" context for the
 field in order to have expensive sculptures promoted to the front page.
+
+Test cases
+----------
+
+The module contains a sub-module "Field context Test" that provides sample data
+for Field context module test cases. It is required by test cases that are
+included in fieldcontext.test file.

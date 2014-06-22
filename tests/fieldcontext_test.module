@@ -6,6 +6,24 @@
  */
 
 /**
+ * Implements hook_help().
+ */
+function fieldcontext_test_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#fieldcontext_test':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>';
+      $output .= t('Field context Test module provides sample data for Field context module test cases.');
+      if (module_exists('simpletest')) {
+        $output .= ' ' . t('See the <a href="@testing-url">Testing</a> page for available tests.', array('@testing-url' => url('admin/config/development/testing')));
+      }
+      $output .= '</p>';
+      return $output;
+  }
+}
+
+/**
  * Implements hook_fieldcontext_option_info().
  */
 function fieldcontext_test_fieldcontext_option_info() {
